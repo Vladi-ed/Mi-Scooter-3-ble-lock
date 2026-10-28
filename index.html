@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#060b12" />
+    <meta
+      name="description"
+      content="Веб-пульт для Xiaomi Mi Scooter 3: подключение по Bluetooth LE, привязка по кнопке питания, блокировка и разблокировка самоката."
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mi3 BLE" />
+    <title>Mi3 BLE — пульт для Xiaomi Mi Scooter 3</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-180.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true">
+      <symbol id="i-scooter" viewBox="0 0 24 24">
+        <path
+          d="M5.2 17.6a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8Zm13.6 0a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8ZM7.4 15.2h9.2M8.1 15.2 10 7.4h2.1M13.9 15.2l2.2-7.8h2.1M14.2 6.2h3.1"
+        />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="5" y="10" width="14" height="10" rx="2.5" />
+        <path d="M8.2 10V7.8a3.8 3.8 0 0 1 7.6 0V10M12 14.2v2.4" />
+      </symbol>
+      <symbol id="i-unlock" viewBox="0 0 24 24">
+        <rect x="5" y="10" width="14" height="10" rx="2.5" />
+        <path d="M8.2 10V7.8a3.8 3.8 0 0 1 7.2-1.7M12 14.2v2.4" />
+      </symbol>
+      <symbol id="i-bluetooth" viewBox="0 0 24 24">
+        <path d="m7 7.5 10 9-5 4.5V3l5 4.5-10 9" />
+      </symbol>
+      <symbol id="i-power" viewBox="0 0 24 24">
+        <path d="M12 3v8" />
+        <path d="M6.3 6.8a7.5 7.5 0 1 0 11.4 0" />
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="8" y="8" width="12" height="12" rx="2" />
+        <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3 4.8 6v5.2c0 4.4 3 8 7.2 9.8 4.2-1.8 7.2-5.4 7.2-9.8V6L12 3Z" />
+        <path d="m9 12 2 2 4-4" />
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 10.5V17M12 7.2v.1" />
+      </symbol>
+      <symbol id="i-battery" viewBox="0 0 24 24">
+        <rect x="3" y="8" width="16" height="8" rx="2" />
+        <path d="M21 11v2" />
+        <path d="M6 11h6v2H6z" />
+      </symbol>
+      <symbol id="i-chip" viewBox="0 0 24 24">
+        <rect x="7" y="7" width="10" height="10" rx="2" />
+        <path d="M10 3v3M14 3v3M10 18v3M14 18v3M3 10h3M3 14h3M18 10h3M18 14h3" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg class="icon"><use href="#i-scooter" /></svg>
+          </div>
+          <div class="brand-text">
+            <h1>Mi3 BLE</h1>
+            <p>Xiaomi Mi Scooter 3 · Web Bluetooth</p>
+          </div>
+        </div>
+        <div id="statusPill" class="status-pill status-pill--idle">
+          <span class="status-dot"></span>
+          <span id="statusText">Не подключено</span>
+        </div>
+      </header>
+
+      <div id="envWarning" class="banner banner--warn hidden" role="status">
+        <svg class="icon"><use href="#i-info" /></svg>
+        <div>
+          <strong id="envTitle">Нужен HTTPS</strong>
+          <p id="envText">Откройте эту страницу по HTTPS в Bluefy.</p>
+        </div>
+      </div>
+
+      <main class="layout">
+        <div class="column">
+          <section class="card" id="connectCard">
+            <div class="card-head">
+              <div class="card-title">
+                <span class="eyebrow">01 · подключение</span>
+                <h2>Самокат</h2>
+              </div>
+              <span id="demoBadge" class="badge badge--demo hidden">Демо</span>
+            </div>
+
+            <div class="device-row">
+              <div class="device-avatar">
+                <svg class="icon"><use href="#i-scooter" /></svg>
+              </div>
+              <div class="device-meta">
+                <div id="deviceName" class="device-name">Самокат не выбран</div>
+                <div id="deviceSub" class="muted">Включите самокат и Bluetooth на iPhone</div>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="btnConnect" class="btn btn--primary btn--grow" type="button">
+                <svg class="icon"><use href="#i-bluetooth" /></svg>
+                <span id="btnConnectLabel">Выбрать самокат</span>
+              </button>
+              <button id="btnSelect" class="btn btn--ghost hidden" type="button">
+                Другое устройство
+              </button>
+              <button id="btnDisconnect" class="btn btn--ghost hidden" type="button">
+                Отключить
+              </button>
+            </div>
+
+            <p class="hint">
+              Первый раз выберите самокат. Дальше приложение предложит подключиться к
+              последнему — список будет коротким или не появится вовсе.
+            </p>
+          </section>
+
+          <section class="card hidden" id="scooterCard">
+            <div class="scooter-head">
+              <div>
+                <span class="eyebrow">02 · управление</span>
+                <h2 id="scooterTitle">Mi Scooter 3</h2>
+                <div id="scooterSerial" class="mono muted">S/N —</div>
+              </div>
+              <div id="lockChip" class="chip chip--unknown">
+                <span class="chip-dot"></span>
+                <span id="lockChipText">Замок: —</span>
+              </div>
+            </div>
+
+            <div class="lock-grid">
+              <button id="btnLock" class="lock-btn lock-btn--lock" type="button" disabled>
+                <span class="lock-icon"><svg class="icon"><use href="#i-lock" /></svg></span>
+                <span class="lock-title">Заблокировать</span>
+              </button>
+              <button id="btnUnlock" class="lock-btn lock-btn--unlock" type="button" disabled>
+                <span class="lock-icon"><svg class="icon"><use href="#i-unlock" /></svg></span>
+                <span class="lock-title">Разблокировать</span>
+              </button>
+            </div>
+
+            <div class="stats">
+              <div class="stat">
+                <span id="statBattery" class="stat-value">—</span>
+                <span class="stat-label">Батарея</span>
+              </div>
+              <div class="stat">
+                <span id="statFirmware" class="stat-value stat-value--small">—</span>
+                <span class="stat-label">Прошивка</span>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button id="btnRefresh" class="btn btn--ghost btn--grow" type="button" disabled>
+                <svg class="icon"><use href="#i-refresh" /></svg>
+                Обновить статус
+              </button>
+            </div>
+
+            <div class="field feature-block">
+              <label for="kersLevel">Рекуперация KERS</label>
+              <p id="kersCurrent" class="hint">Текущий уровень не прочитан. Нажмите «Диагностика».</p>
+              <div class="button-row">
+                <select id="kersLevel" disabled aria-label="Новый уровень рекуперации">
+                  <option value="">Выберите уровень</option>
+                  <option value="0">Слабая</option>
+                  <option value="1">Средняя</option>
+                  <option value="2">Сильная</option>
+                </select>
+                <button id="btnKers" class="btn btn--ghost" type="button" disabled>Применить</button>
+              </div>
+            </div>
+            <details class="feature-block" id="diagnosticsPanel">
+              <summary>Расширенная диагностика</summary>
+              <p class="hint">Версии, пробег, напряжение, температура и коды ошибок. Отсутствие ответа не означает неисправность. Расшифровка по карте Ninebot требует проверки на вашей прошивке.</p>
+              <div class="button-row">
+                <button id="btnDiagnostics" class="btn btn--ghost" type="button" disabled>Диагностика</button>
+                <button id="btnDiagnosticReport" class="btn btn--ghost" type="button" disabled>Открыть отчёт JSON</button>
+              </div>
+              <p id="diagnosticTime" class="hint">Показатели ещё не прочитаны.</p>
+              <dl id="diagnosticValues" class="diagnostic-values"></dl>
+            </details>
+          </section>
+
+        </div>
+
+        <div class="column">
+          <details class="card advanced log-card" id="logCard">
+            <summary><span>Журнал команд</span><svg class="icon chevron"><use href="#i-chevron" /></svg></summary>
+            <div class="advanced-body">
+            <div class="card-head">
+
+              <div class="log-tools">
+                <label class="switch" title="Полный журнал содержит данные устройства и материал привязки; не публикуйте его">
+                  <input id="detailedLog" type="checkbox" />
+                  <span>подробно</span>
+                </label>
+                <label class="switch" title="Добавляет в подробный журнал зашифрованные пакеты, отправленные и полученные по Bluetooth. Шифрование соединения не меняется.">
+                  <input id="showEncrypted" type="checkbox" aria-describedby="encryptedLogHint" />
+                  <span>Зашифрованные пакеты</span>
+                </label>
+                <button id="btnCopyLog" class="icon-btn" type="button" title="Копировать журнал">
+                  <svg class="icon"><use href="#i-copy" /></svg>
+                </button>
+                <button id="btnClearLog" class="icon-btn" type="button" title="Очистить журнал">
+                  <svg class="icon"><use href="#i-trash" /></svg>
+                </button>
+              </div>
+            </div>
+            <p id="encryptedLogHint" class="hint">В режиме «подробно» показывает также зашифрованные пакеты Bluetooth для диагностики обмена. Переключатель меняет только журнал, шифрование соединения остаётся включённым в режиме Ninebot AES.</p>
+            <p id="logPrivacyHint" class="hint hidden">Подробный журнал содержит данные устройства и материал привязки. Не публикуйте его. Для отчёта выключите «подробно» и проверьте скопированный текст.</p>
+            <div id="log" class="log" role="log" aria-live="polite"></div>
+            <div id="logEmpty" class="empty">
+              <svg class="icon"><use href="#i-info" /></svg>
+              <p>Здесь появятся события подключения и результаты команд.</p>
+            </div>
+          </div>
+          </details>
+
+          <details class="card advanced" id="advancedCard">
+            <summary>
+              <span>Дополнительно</span>
+              <svg class="icon chevron"><use href="#i-chevron" /></svg>
+            </summary>
+            <div class="advanced-body">
+              <div class="field">
+                <button id="btnForgetPairing" class="btn btn--ghost btn--tiny" type="button">Забыть привязку</button>
+                <p class="hint">Ключ сохраняется в этом браузере после подтверждения кнопкой. Повторное подключение использует сохранённую привязку.</p>
+              </div>
+              <div class="field">
+                <label for="cryptoName">Имя Bluetooth для AES-ключа</label>
+                <input
+                  id="cryptoName"
+                  type="text"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  spellcheck="false"
+                  placeholder="Mi Scooter 3"
+                />
+                <div class="button-row button-row--tight">
+                  <button id="btnUseDeviceName" class="btn btn--ghost btn--tiny" type="button">
+                    Взять из Bluetooth
+                  </button>
+                  <button id="btnResetName" class="btn btn--ghost btn--tiny" type="button">
+                    Сбросить
+                  </button>
+                </div>
+                <p class="hint">
+                  Ключ считается из имени, которое самокат отдаёт по Bluetooth. Если
+                  привязка не идёт — проверьте это поле.
+                </p>
+              </div>
+
+              <div class="field">
+                <label for="protocol">Протокол</label>
+                <select id="protocol">
+                  <option value="aes">Ninebot AES (Mi 3)</option>
+                  <option value="plain">Ninebot без AES</option>
+                </select>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="gattWrite">GATT-запись</label>
+                  <select id="gattWrite">
+                    <option value="auto">Авто (приоритет с ответом)</option>
+                    <option value="with">Всегда с ответом</option>
+                    <option value="without">Всегда без ответа</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="writeMode">Кадры</label>
+                  <select id="writeMode">
+                    <option value="auto">Авто: длинные — по 20</option>
+                    <option value="whole">Всегда целиком</option>
+                    <option value="chunk20">Всегда по 20 байт</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="gapMs" title="Задержка между частями одного пакета при разбиении на блоки по 20 байт. Даёт Bluetooth-стеку время обработать предыдущую часть. При отправке пакета целиком не используется.">Пауза между частями, мс ⓘ</label>
+                  <input id="gapMs" type="number" min="0" max="200" step="5" value="0" aria-describedby="gapMsHint" title="Рекомендуется 40 мс — это значение проверено на Mi Scooter 3. По умолчанию 0 мс: отправка без дополнительной задержки." />
+                  <p id="gapMsHint" class="hint">Рекомендуется 40 мс — проверено на Mi Scooter 3. По умолчанию: 0 мс, без задержки.</p>
+                </div>
+                <div class="field field--align-end">
+                  <button id="btnDemo" class="btn btn--ghost btn--block" type="button">
+                    Демо без самоката
+                  </button>
+                </div>
+              </div>
+
+              <p class="hint">
+                Демо-режим использует настоящий протокол и AES, но виртуальный самокат.
+                Удобно проверить интерфейс без железа.
+              </p>
+            </div>
+          </details>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <p class="muted"><a href="LICENSE">Лицензия</a> · <a href="THIRD_PARTY_NOTICES.md">Источники</a></p>
+      </footer>
+    </div>
+
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+      <div class="overlay-card">
+        <div class="overlay-steps" id="overlaySteps">
+          <div class="overlay-step is-active" data-step="1"><span>1</span>Ключ</div>
+          <div class="overlay-step" data-step="2"><span>2</span>Кнопка</div>
+          <div class="overlay-step" data-step="3"><span>3</span>Привязка</div>
+        </div>
+
+        <div class="power-visual" id="powerVisual">
+          <div class="pulse pulse--1"></div>
+          <div class="pulse pulse--2"></div>
+          <div class="power-circle">
+            <svg class="icon"><use href="#i-power" /></svg>
+          </div>
+        </div>
+
+        <h2 id="overlayTitle">Привязка к самокату</h2>
+        <p id="overlayText" class="overlay-text">Обмениваемся ключами…</p>
+        <div id="overlaySerial" class="overlay-serial mono"></div>
+
+        <div class="progress"><div id="overlayBar" class="progress-bar" style="width: 8%"></div></div>
+
+        <div class="overlay-actions">
+          <button id="btnOverlayCancel" class="btn btn--ghost" type="button">Отмена</button>
+          <button id="btnOverlayRetry" class="btn btn--primary hidden" type="button">
+            Повторить
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

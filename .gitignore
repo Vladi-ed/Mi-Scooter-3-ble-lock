@@ -1,0 +1,20 @@
+dist/
+.sites-runtime/
+node_modules/
+outputs/
+.openai/
+.idea/
+*.log
+docs/logs*.txt
+*.zip
+*.tar.gz
+.env
+.env.*
+!.env.example
+
+# Local development and publication notes
+/.codex/
+/.agents/
+/docs/github-publication-plan.md
+/docs/connection-v*.md
+/docs/read-recovery-v*.md

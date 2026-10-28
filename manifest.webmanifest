@@ -1,0 +1,25 @@
+{
+  "name": "Mi3 BLE пульт для Xiaomi Mi Scooter 3",
+  "short_name": "Mi3 BLE",
+  "description": "Web Bluetooth пульт: блокировка и разблокировка Xiaomi Mi Scooter 3.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060b12",
+  "theme_color": "#060b12",
+  "icons": [
+    {
+      "src": "icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

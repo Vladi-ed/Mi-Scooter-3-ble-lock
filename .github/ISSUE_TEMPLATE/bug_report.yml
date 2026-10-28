@@ -1,0 +1,63 @@
+name: Ошибка приложения
+description: Сообщить об ошибке интерфейса или подключения без личных данных.
+title: "[Ошибка] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Не прикладывайте подробные журналы, дампы хранилища, реальные пакеты,
+        имя устройства, серийный номер или ключи. Об уязвимостях сообщайте
+        по правилам SECURITY.md.
+  - type: input
+    id: app_version
+    attributes:
+      label: Версия приложения
+      description: Версия в первой строке журнала после загрузки страницы; при локальных изменениях укажите коммит.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: ОС и браузер
+      placeholder: iOS …, Bluefy … / Windows …, Chrome …
+    validations:
+      required: true
+  - type: input
+    id: scooter
+    attributes:
+      label: Модель и прошивка
+      description: Без Bluetooth-имени, серийного номера и других идентификаторов.
+  - type: input
+    id: settings
+    attributes:
+      label: Настройки подключения
+      description: Протокол, метод GATT, разбиение кадров и пауза между частями.
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Где возникает ошибка?
+      options:
+        - Демо
+        - Настоящий самокат
+        - В обоих режимах
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Как воспроизвести
+      description: Шаги, ожидаемый результат и фактическое поведение. Без raw-журнала.
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Текст ошибки
+      description: Укажите только обезличенное сообщение; удалите идентификаторы и HEX-пакеты.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Приватность
+      options:
+        - label: Я проверил, что отчёт не содержит личных идентификаторов, ключей и реальных пакетов обмена.
+          required: true
